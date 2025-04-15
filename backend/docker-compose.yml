@@ -1,0 +1,30 @@
+#version: "3.8"
+
+services:
+  auth_service: # 8001
+    build:
+      context: ./auth_service
+      dockerfile: Dockerfile
+    command: sh -c 'sh scripts/startapp.sh'
+    container_name: auth_service
+    ports:
+      - 8001:8001
+    volumes:
+      - ./auth_service:/app
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "curl", "localhost:8001/docs" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1600M
+    restart: on-failure
+    networks:
+      - tarot_network
+
+networks:
+  tarot_network:
