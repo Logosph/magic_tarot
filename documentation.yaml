@@ -1,0 +1,550 @@
+openapi: 3.0.3
+info:
+  title: API Документация
+  version: 1.0.0
+  description: API для авторизации и управления пользователем
+
+servers:
+  - url: https://api.example.com
+
+tags:
+  - name: Авторизация
+    description: Эндпоинты для регистрации и входа
+  - name: Пользователь
+    description: Эндпоинты для управления пользователем
+  - name: Расклады
+    description: Эндпоинты для работы с картами и раскладами
+
+paths:
+  /signup:
+    post:
+      tags:
+        - Авторизация
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
+
+  /signin:
+    post:
+      tags:
+        - Авторизация
+      summary: Аутентификация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SigninRequest'
+      responses:
+        '200':
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
+
+  /update_name:
+    put:
+      tags:
+        - Пользователь
+      security:
+        - bearerAuth: []
+      summary: Обновление имени пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNameRequest'
+      responses:
+        '200':
+          description: Имя обновлено
+
+  /me:
+    get:
+      tags:
+        - Пользователь
+      security:
+        - bearerAuth: []
+      summary: Получение информации о себе
+      responses:
+        '200':
+          description: Информация о пользователе
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+
+  /my_achievements:
+    get:
+      tags:
+        - Пользователь
+      security:
+        - bearerAuth: []
+      summary: Получение списка достижений
+      responses:
+        '200':
+          description: Список достижений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementsResponse'
+
+  /statistics:
+    get:
+      tags:
+        - Пользователь
+      security:
+        - bearerAuth: []
+      summary: Получение статистики пользователя
+      responses:
+        '200':
+          description: Статистика
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatisticsResponse'
+
+  /mark_reading:
+    put:
+      tags:
+        - Пользователь
+      security:
+        - bearerAuth: []
+      summary: Отметить расклад как сбылся/не сбылся
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkReadingRequest'
+      responses:
+        '200':
+          description: Статус расклада обновлен
+
+  /get_my_card_of_the_day:
+    get:
+      tags:
+        - Пользователь
+      security:
+        - bearerAuth: []
+      summary: Получить карту дня пользователя
+      responses:
+        '200':
+          description: Карта дня
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+
+  /get_templates:
+    get:
+      tags:
+        - Расклады
+      summary: Получить список шаблонов раскладов
+      responses:
+        '200':
+          description: Список шаблонов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorizedTemplatesResponse'
+
+  /get_template_by_id:
+    get:
+      tags:
+        - Расклады
+      summary: Получить шаблон по ID
+      responses:
+        '200':
+          description: Данные шаблона
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateDetailResponse'
+
+  /get_cards:
+    get:
+      tags:
+        - Расклады
+      summary: Получить список карт
+      responses:
+        '200':
+          description: Список карт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardsResponse'
+
+  /get_card_by_id:
+    get:
+      tags:
+        - Расклады
+      summary: Получить карту по ID
+      responses:
+        '200':
+          description: Данные карты
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+
+  /get_reading_by_template:
+    post:
+      tags:
+        - Расклады
+      security:
+        - bearerAuth: []
+      summary: Получить расклад по шаблону
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetReadingByTemplateRequest'
+      responses:
+        '200':
+          description: Список карт и ID расклада
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingResponse'
+
+  /get_reading_by_question:
+    post:
+      tags:
+        - Расклады
+      security:
+        - bearerAuth: []
+      summary: Получить расклад по вопросу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetReadingByQuestionRequest'
+      responses:
+        '200':
+          description: Список карт и ID расклада
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingResponse'
+
+  /get_interpretation:
+    put:
+      tags:
+        - Расклады
+      security:
+        - bearerAuth: []
+      summary: Получить интерпретацию расклада
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetInterpretationRequest'
+      responses:
+        '200':
+          description: Интерпретация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterpretationResponse'
+
+  /add_note:
+    put:
+      tags:
+        - Расклады
+      security:
+        - bearerAuth: []
+      summary: Добавить заметку к раскладу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddNoteRequest'
+      responses:
+        '200':
+          description: Заметка добавлена
+
+  /get_card_readings:
+    get:
+      tags:
+        - Расклады
+      security:
+        - bearerAuth: []
+      summary: Получить список раскладов пользователя
+      responses:
+        '200':
+          description: Список раскладов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardReadingsResponse'
+
+  /get_card_reading_by_id:
+    get:
+      tags:
+        - Расклады
+      security:
+        - bearerAuth: []
+      summary: Получить расклад по ID
+      responses:
+        '200':
+          description: Данные расклада
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardReadingDetailResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    SignupRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    SigninRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AccessTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+
+    UpdateNameRequest:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    UserInfoResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        date_of_registration:
+          type: string
+          format: date-time
+        prefs:
+          type: object
+        card_of_the_day:
+          type: integer
+
+    AchievementsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          title:
+            type: string
+          description:
+            type: string
+
+    StatisticsResponse:
+      type: object
+      properties:
+        cameTrue: 
+          type: integer
+        notCameTrue:
+          type: integer
+        notStated: 
+          type: integer
+
+    MarkReadingRequest:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+        cameTrue:
+          type: boolean
+      required:
+        - reading_id
+
+    CardResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        meaning:
+          type: string
+        image_url:
+          type: string
+        interpretation_of_day:
+          type: string
+
+    CategorizedTemplatesResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          category_name:
+            type: string
+          templates:
+            type: array
+            items:
+              type: object
+              properties:
+                template_id:
+                  type: integer
+                template_name:
+                  type: string
+
+    TemplateDetailResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        card_questions:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              num:
+                type: integer
+              question:
+                type: string
+
+    CardsResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/CardResponse'
+
+    GetReadingByTemplateRequest:
+      type: object
+      properties:
+        template_id:
+          type: integer
+      required:
+        - template_id
+
+    GetReadingByQuestionRequest:
+      type: object
+      properties:
+        question:
+          type: string
+      required:
+        - question
+
+    ReadingResponse:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardResponse'
+
+    GetInterpretationRequest:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+      required:
+        - reading_id
+
+    InterpretationResponse:
+      type: object
+      properties:
+        interpretation:
+          type: string
+
+    AddNoteRequest:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+        note:
+          type: string
+      required:
+        - reading_id
+        - note
+
+    CardReadingsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          came_true:
+            type: boolean
+          date:
+            type: string
+            format: date-time
+
+    CardReadingDetailResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        came_true:
+          type: boolean
+        date:
+          type: string
+          format: date-time
+        note:
+          type: string
+        interpretation:
+          type: string
+        template_id:
+          type: integer
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardResponse'
