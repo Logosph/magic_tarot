@@ -11,13 +11,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
-import ru.damapi.divinaition.ui.AuthBackground
 import ru.damapi.divinaition.ui.DivineButton
 import ru.damapi.divinaition.ui.DivineLoadingScreen
 import ru.damapi.divinaition.ui.DivinePasswordField
@@ -55,19 +56,21 @@ fun LoginView(
         is LoginState.Main -> {
             MainState(
                 state,
-                onEmailChanged = { viewModel.obtainEvent(LoginEvent.EmailChanged(it)) },
-                onPasswordChanged = { viewModel.obtainEvent(LoginEvent.PasswordChanged(it)) },
-                onLoginClicked = { viewModel.obtainEvent(LoginEvent.ProceedClicked) },
-                onSignupClicked = { viewModel.obtainEvent(LoginEvent.SignupClicked) }
+                onLoginClicked = { email, password -> viewModel.obtainEvent(LoginEvent.ProceedClicked(email, password)) },
+                onSignupClicked = { email, password -> viewModel.obtainEvent(LoginEvent.SignupClicked(email, password)) },
+                onEmailChanged = { email -> viewModel.obtainEvent(LoginEvent.EmailChanged(email)) },
+                onPasswordChanged = { password ->
+                    viewModel.obtainEvent(
+                        LoginEvent.PasswordChanged(
+                            password
+                        )
+                    )
+                }
             )
         }
 
         is LoginState.Loading -> {
             DivineLoadingScreen()
-        }
-
-        is LoginState.Initialization -> {
-            viewModel.obtainEvent(LoginEvent.LoadData)
         }
     }
 
@@ -77,11 +80,14 @@ fun LoginView(
 @Composable
 fun MainState(
     state: LoginState.Main,
+    onLoginClicked: (String, String) -> Unit,
+    onSignupClicked: (String, String) -> Unit,
     onEmailChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
-    onLoginClicked: () -> Unit,
-    onSignupClicked: () -> Unit,
 ) {
+    val email = remember { mutableStateOf(state.email) }
+    val password = remember { mutableStateOf(state.password) }
+    //Log.d("StateDebug", "email: ${state.email}, password: ${state.password}")
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -110,19 +116,21 @@ fun MainState(
             }
             DivineTextField(
                 label = "Почта",
-                value = state.email,
-                onValueChange = onEmailChanged,
+                text = email.value,
+                onValueChanged = { email.value = it },
+                onFocusChanged = { onEmailChanged(it) },
                 errorMessage = state.emailError
             )
             DivinePasswordField(
                 label = "Пароль",
-                value = state.password,
-                onValueChange = onPasswordChanged,
+                input = password.value,
+                onValueChanged = { password.value = it },
+                onFocusChanged = { onPasswordChanged(it) },
                 errorMessage = state.passwordError
             )
             DivineButton(
                 text = "Войти",
-                onClick = onLoginClicked,
+                onClick = { onLoginClicked(email.value, password.value) },
             )
         }
         Box(
@@ -131,7 +139,7 @@ fun MainState(
         ) {
             DivineTextButton(
                 text = "Еще нет аккаунта? Зарегистрируйтесь!",
-                onClick = onSignupClicked,
+                onClick = { onSignupClicked(email.value, password.value) },
             )
         }
     }
@@ -150,7 +158,7 @@ fun LoginPreview() {
         ),
         onEmailChanged = {},
         onPasswordChanged = {},
-        onLoginClicked = {},
-        onSignupClicked = {}
+        onLoginClicked = {_, _ -> },
+        onSignupClicked = {_, _ -> }
     )
 }

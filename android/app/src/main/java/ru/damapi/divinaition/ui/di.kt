@@ -4,6 +4,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import ru.damapi.data.dataModule
 import ru.damapi.divinaition.ui.login.LoginViewModel
+import ru.damapi.divinaition.ui.signup.SignupViewModel
 import ru.damapi.domain.use_cases.GetCurrentUserUseCase
 import ru.damapi.domain.use_cases.LoginUseCase
 import ru.damapi.domain.use_cases.SignupUseCase
@@ -16,6 +17,7 @@ val domainModule = module {
 
 val appModule = module {
     viewModel<LoginViewModel> {LoginViewModel(get(), get())}
+    viewModel<SignupViewModel> {SignupViewModel(get())}
 }
 
 val koinModules = listOf(dataModule, domainModule, appModule)

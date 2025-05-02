@@ -10,30 +10,30 @@ class SignupUseCase(
         username: String,
         password: String,
         confirmPassword: String
-    ): SIGNUP_RESULT {
+    ): SignupResult {
         val invalidPasswordCharsRegex = "[^a-zA-Z0-9!@#$%^&*()_+{}\\[\\]:;<>,.?~\\\\/-]".toRegex()
         val passwordRegex =
             "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z0-9!@#$%^&*()_+{}\\[\\]:;<>,.?~\\\\/-]{8,}$".toRegex()
         val usernameRegex = "^[a-zA-Z0-9_а-яА-Я]+$".toRegex()
         if (password != confirmPassword) {
-            return SIGNUP_RESULT.PASSWORDS_DO_NOT_MATCH
+            return SignupResult.PASSWORDS_DO_NOT_MATCH
         }
         if (invalidPasswordCharsRegex.containsMatchIn(password)) {
-            return SIGNUP_RESULT.PASSWORD_INCORRECT
+            return SignupResult.PASSWORD_INCORRECT
         }
         if (!password.matches(passwordRegex)) {
-            return SIGNUP_RESULT.PASSWORD_WEAK
+            return SignupResult.PASSWORD_WEAK
         }
         if (username.length < 3 || username.length > 15) {
-            return SIGNUP_RESULT.USERNAME_LENGTH
+            return SignupResult.USERNAME_LENGTH
         } else if (!username.matches(usernameRegex)) {
-            return SIGNUP_RESULT.USERNAME_INCORRECT
+            return SignupResult.USERNAME_INCORRECT
         }
         return repo.signup(email, password, username)
     }
 }
 
-enum class SIGNUP_RESULT(val error: String) {
+enum class SignupResult(val error: String) {
     OK(""),
     PASSWORDS_DO_NOT_MATCH("Пароли не совпадают"),
     PASSWORD_WEAK("Слабый пароль"),

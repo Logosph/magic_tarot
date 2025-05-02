@@ -1,5 +1,6 @@
 package ru.damapi.divinaition.ui.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,7 @@ class LoginViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val loginUseCase: LoginUseCase,
 ): ViewModel() {
-    private val _viewState = MutableStateFlow<LoginState>(LoginState.Initialization)
+    private val _viewState = MutableStateFlow<LoginState>(LoginState.Main())
     val viewState: StateFlow<LoginState>
         get() = _viewState
     private val _viewAction = MutableStateFlow<LoginAction?>(null)
@@ -24,9 +25,8 @@ class LoginViewModel(
 
     fun obtainEvent(event: LoginEvent) {
         when (event) {
-            is LoginEvent.LoadData -> checkIfUserIsLoggedIn()
-            is LoginEvent.ProceedClicked -> proceed()
-            is LoginEvent.SignupClicked -> signup()
+            is LoginEvent.ProceedClicked -> proceed(event.email, event.password)
+            is LoginEvent.SignupClicked -> signup(event.email, event.password)
             is LoginEvent.ClearAction -> clearAction()
             is LoginEvent.EmailChanged -> emailChanged(event.email)
             is LoginEvent.PasswordChanged -> passwordChanged(event.password)
@@ -40,6 +40,7 @@ class LoginViewModel(
     }
 
     private fun emailChanged(email: String) {
+        Log.d("StateDebug", "email event: $email")
         val state = _viewState.value
         if (state !is LoginState.Main) return
         _viewState.value = state.copy(email = email)
@@ -49,17 +50,22 @@ class LoginViewModel(
         _viewAction.value = null
     }
 
-    private fun signup() {
+    private fun signup(email: String, password: String) {
+        val state = _viewState.value
+        if (state !is LoginState.Main) return
+        _viewState.value = state.copy(email = email, password = password)
         _viewAction.value = LoginAction.NavigateToSignup
     }
 
-    private fun proceed() {
-        val state = _viewState.value
+    private fun proceed(email: String, password: String) {
+        var state = _viewState.value
         if (state !is LoginState.Main) return
+        state = state.copy(email = email, password = password)
         _viewState.value = LoginState.Loading
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val loginResult = loginUseCase.execute(state.email, state.password)
+                Log.d("StateDebug", "log in attempt with email: ${state.email}, password: ${state.password}")
                 when (loginResult) {
                     LoginResult.OK -> {
                         _viewAction.value = LoginAction.NavigateToHome
@@ -78,21 +84,6 @@ class LoginViewModel(
                         //тоже переделать
                         _viewState.value = state.copy(passwordError = "Ошибка сервера. Попробуйте повторить запрос")
                     }
-                }
-            }
-        }
-    }
-
-    private fun checkIfUserIsLoggedIn() {
-        _viewState.value = LoginState.Loading
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                //val user = getCurrentUserUseCase.execute()
-                val user = null //Это тут пока нет апишника
-                if (user != null) {
-                    _viewAction.value = LoginAction.NavigateToHome
-                } else {
-                    _viewState.value = LoginState.Main()
                 }
             }
         }

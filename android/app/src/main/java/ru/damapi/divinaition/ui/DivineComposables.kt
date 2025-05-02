@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
@@ -20,11 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextDirection.Companion.Content
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.damapi.divinaition.ui.vectors.backgrounds.Cloud
@@ -65,14 +63,21 @@ fun AuthBackground() {
 @Composable
 fun DivineTextField(
     label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    errorMessage: String? = null
+    text: String,
+    errorMessage: String? = null,
+    onValueChanged: (String) -> Unit,
+    onFocusChanged: (String) -> Unit
 ) {
     TextField(
-        modifier = Modifier.padding(8.dp),
-        value = value,
-        onValueChange = onValueChange,
+        modifier = Modifier
+            .padding(8.dp)
+            .onFocusChanged {
+                onFocusChanged(text)
+            },
+        value = text,
+        onValueChange = {
+            onValueChanged(it)
+        },
         label = { Text(label) },
         isError = errorMessage != null,
         supportingText = {
@@ -86,15 +91,20 @@ fun DivineTextField(
 @Composable
 fun DivinePasswordField(
     label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
+    input: String,
+    onValueChanged: (String) -> Unit,
+    onFocusChanged: (String) -> Unit,
     errorMessage: String? = null
 ) {
     val isVisible = remember { mutableStateOf(false) }
     TextField(
-        modifier = Modifier.padding(8.dp),
-        value = value,
-        onValueChange = onValueChange,
+        modifier = Modifier
+            .padding(8.dp)
+            .onFocusChanged {
+                onFocusChanged(input)
+            },
+        value = input,
+        onValueChange = { onValueChanged(it) },
         label = { Text(label) },
         isError = errorMessage != null,
         supportingText = {

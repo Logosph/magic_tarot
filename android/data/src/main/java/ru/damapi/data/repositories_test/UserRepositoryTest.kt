@@ -3,15 +3,15 @@ package ru.damapi.data.repositories_test
 import ru.damapi.domain.models.UserModel
 import ru.damapi.domain.repositories.UserRepository
 import ru.damapi.domain.use_cases.LoginResult
-import ru.damapi.domain.use_cases.SIGNUP_RESULT
+import ru.damapi.domain.use_cases.SignupResult
 
 class UserRepositoryTest : UserRepository {
     override suspend fun login(email: String, password: String): LoginResult {
         return LoginResult.OK
     }
 
-    override suspend fun signup(email: String, password: String, username: String): SIGNUP_RESULT {
-        return SIGNUP_RESULT.OK
+    override suspend fun signup(email: String, password: String, username: String): SignupResult {
+        return SignupResult.OK
     }
 
     override suspend fun getCurrentUser(): UserModel? {
