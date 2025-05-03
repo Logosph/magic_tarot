@@ -23,6 +23,10 @@ class LoginViewModel(
     val viewAcion: StateFlow<LoginAction?>
         get() = _viewAction
 
+    init {
+        Log.d("StateDebug", "LoginViewModel init")
+    }
+
     fun obtainEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.ProceedClicked -> proceed(event.email, event.password)

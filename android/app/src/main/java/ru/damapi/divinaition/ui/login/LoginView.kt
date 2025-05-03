@@ -1,5 +1,6 @@
 package ru.damapi.divinaition.ui.login
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,19 +20,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
-import ru.damapi.divinaition.ui.DivineButton
-import ru.damapi.divinaition.ui.DivineLoadingScreen
-import ru.damapi.divinaition.ui.DivinePasswordField
-import ru.damapi.divinaition.ui.DivineTextButton
-import ru.damapi.divinaition.ui.DivineTextField
-import ru.damapi.divinaition.ui.DivineTitle
+import ru.damapi.divinaition.ui.divine_composables.DivineButton
+import ru.damapi.divinaition.ui.divine_composables.DivineLoadingScreen
+import ru.damapi.divinaition.ui.divine_composables.DivinePasswordField
+import ru.damapi.divinaition.ui.divine_composables.DivineTextButton
+import ru.damapi.divinaition.ui.divine_composables.DivineTextField
+import ru.damapi.divinaition.ui.divine_composables.DivineTitle
 import ru.damapi.divinaition.ui.Screen
 import ru.damapi.divinaition.ui.vectors.backgrounds.Star
 
 @Composable
 fun LoginView(
     navController: NavController,
-    viewModel: LoginViewModel = koinViewModel()
+    viewModel: LoginViewModel
 ) {
     val viewState = viewModel.viewState.collectAsState()
     val viewAction = viewModel.viewAcion.collectAsState()
@@ -39,7 +40,15 @@ fun LoginView(
     when (viewAction.value) {
         is LoginAction.NavigateToSignup -> {
             viewModel.obtainEvent(LoginEvent.ClearAction)
-            navController.navigate(Screen.SignupScreen.route)
+            //check how many destinations are in the backstack
+            val currentEntry = navController.currentBackStackEntry
+            val previousEntry = navController.previousBackStackEntry
+            Log.d("StateDebug", "Current destination: ${currentEntry?.destination?.route}")
+            Log.d("StateDebug", "Previous destination: ${previousEntry?.destination?.route}")
+            navController.navigate(Screen.SignupScreen.route) {
+                launchSingleTop = true
+                restoreState = true
+            }
         }
 
         is LoginAction.NavigateToHome -> {
@@ -87,7 +96,6 @@ fun MainState(
 ) {
     val email = remember { mutableStateOf(state.email) }
     val password = remember { mutableStateOf(state.password) }
-    //Log.d("StateDebug", "email: ${state.email}, password: ${state.password}")
     Box(
         modifier = Modifier.fillMaxSize()
     ) {

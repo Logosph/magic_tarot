@@ -10,6 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import ru.damapi.divinaition.ui.divine_composables.AuthBackground
+import ru.damapi.divinaition.ui.divine_composables.HomeBackground
+import ru.damapi.divinaition.ui.divine_composables.MainBackground
 
 @Composable
 fun MainView(
@@ -36,7 +39,15 @@ fun MainView(
 
 @Composable
 fun Background(currentRoute: String?) {
-    if (currentRoute == Screen.LoginScreen.route || currentRoute == Screen.SignupScreen.route) {
-        AuthBackground()
+    when (currentRoute) {
+        Screen.LoginScreen.route, Screen.SignupScreen.route -> {
+            AuthBackground()
+        }
+        Screen.HomeScreen.route -> {
+            HomeBackground()
+        }
+        else -> {
+            MainBackground()
+        }
     }
 }

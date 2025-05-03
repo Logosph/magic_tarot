@@ -1,5 +1,6 @@
 package ru.damapi.divinaition.ui.signup
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,11 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
-import ru.damapi.divinaition.ui.DivineButton
-import ru.damapi.divinaition.ui.DivinePasswordField
-import ru.damapi.divinaition.ui.DivineTextButton
-import ru.damapi.divinaition.ui.DivineTextField
-import ru.damapi.divinaition.ui.DivineTitle
+import ru.damapi.divinaition.ui.divine_composables.DivineButton
+import ru.damapi.divinaition.ui.divine_composables.DivinePasswordField
+import ru.damapi.divinaition.ui.divine_composables.DivineTextButton
+import ru.damapi.divinaition.ui.divine_composables.DivineTextField
+import ru.damapi.divinaition.ui.divine_composables.DivineTitle
+import ru.damapi.divinaition.ui.Screen
 import ru.damapi.divinaition.ui.vectors.backgrounds.Star
 
 
@@ -38,14 +39,21 @@ fun SignupView(
 
     when (viewAction.value) {
         is SignupAction.NavigateToLogin -> {
+            val currentEntry = navController.currentBackStackEntry
+            val previousEntry = navController.previousBackStackEntry
+            Log.d("StateDebug", "Current destination: ${currentEntry?.destination?.route}")
+            Log.d("StateDebug", "Previous destination: ${previousEntry?.destination?.route}")
             viewModel.obtainEvent(SignupEvent.ClearAction)
-            navController.popBackStack()
+            navController.navigate(Screen.LoginScreen.route) {
+                launchSingleTop = true
+                restoreState = true
+            }
         }
 
         is SignupAction.NavigateToHome -> {
             viewModel.obtainEvent(SignupEvent.ClearAction)
-            navController.navigate("home") {
-                popUpTo("signup") { inclusive = true }
+            navController.navigate(Screen.HomeScreen.route) {
+                popUpTo(Screen.LoginScreen.route) { inclusive = true }
             }
         }
 
