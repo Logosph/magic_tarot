@@ -89,6 +89,7 @@ class SignupViewModel(
         Log.d("StateDebug", "email: $email, username: $username, password: $password, confirmPassword: $confirmPassword")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                Thread.sleep(1000)
                 val result = signupUseCase.execute(
                     email = email,
                     username = username,

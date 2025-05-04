@@ -31,3 +31,14 @@ fun DivineBigText(
         fontSize = 24.sp,
     )
 }
+
+@Composable
+fun DivineText(
+    text: String
+) {
+    Text(
+        text = text,
+        modifier = Modifier.padding(16.dp),
+        fontSize = 18.sp,
+    )
+}

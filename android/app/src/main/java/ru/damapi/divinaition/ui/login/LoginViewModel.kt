@@ -68,6 +68,7 @@ class LoginViewModel(
         _viewState.value = LoginState.Loading
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                Thread.sleep(1000)
                 val loginResult = loginUseCase.execute(state.email, state.password)
                 Log.d("StateDebug", "log in attempt with email: ${state.email}, password: ${state.password}")
                 when (loginResult) {

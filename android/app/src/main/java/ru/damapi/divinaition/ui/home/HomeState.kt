@@ -1,11 +1,11 @@
 package ru.damapi.divinaition.ui.home
 
-import ru.damapi.domain.models.CardOfTheDayModel
+import ru.damapi.domain.models.CardModel
 
 sealed class HomeState {
     data class Main(
         val isLoading: Boolean = false,
-        val cardOfTheDay: CardOfTheDayModel? = null,
+        val cardOfTheDay: CardModel? = null,
         val showCardOfTheDay: Boolean = false,
     ): HomeState()
     data object Loading: HomeState()

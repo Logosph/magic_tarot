@@ -19,20 +19,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
+import ru.damapi.divinaition.ui.Screen
 import ru.damapi.divinaition.ui.divine_composables.DivineButton
 import ru.damapi.divinaition.ui.divine_composables.DivineLoadingScreen
 import ru.damapi.divinaition.ui.divine_composables.DivinePasswordField
 import ru.damapi.divinaition.ui.divine_composables.DivineTextButton
 import ru.damapi.divinaition.ui.divine_composables.DivineTextField
 import ru.damapi.divinaition.ui.divine_composables.DivineTitle
-import ru.damapi.divinaition.ui.Screen
 import ru.damapi.divinaition.ui.vectors.backgrounds.Star
 
 @Composable
 fun LoginView(
     navController: NavController,
-    viewModel: LoginViewModel
+    viewModel: LoginViewModel = koinInject()
 ) {
     val viewState = viewModel.viewState.collectAsState()
     val viewAction = viewModel.viewAcion.collectAsState()
@@ -40,11 +40,6 @@ fun LoginView(
     when (viewAction.value) {
         is LoginAction.NavigateToSignup -> {
             viewModel.obtainEvent(LoginEvent.ClearAction)
-            //check how many destinations are in the backstack
-            val currentEntry = navController.currentBackStackEntry
-            val previousEntry = navController.previousBackStackEntry
-            Log.d("StateDebug", "Current destination: ${currentEntry?.destination?.route}")
-            Log.d("StateDebug", "Previous destination: ${previousEntry?.destination?.route}")
             navController.navigate(Screen.SignupScreen.route) {
                 launchSingleTop = true
                 restoreState = true

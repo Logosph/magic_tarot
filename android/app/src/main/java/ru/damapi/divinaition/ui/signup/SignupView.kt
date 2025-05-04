@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import ru.damapi.divinaition.ui.divine_composables.DivineButton
 import ru.damapi.divinaition.ui.divine_composables.DivinePasswordField
 import ru.damapi.divinaition.ui.divine_composables.DivineTextButton
@@ -32,7 +33,7 @@ import ru.damapi.divinaition.ui.vectors.backgrounds.Star
 @Composable
 fun SignupView(
     navController: NavController,
-    viewModel: SignupViewModel = koinViewModel()
+    viewModel: SignupViewModel = koinInject()
 ) {
     val viewState = viewModel.viewState.collectAsState()
     val viewAction = viewModel.viewAction.collectAsState()

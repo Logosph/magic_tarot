@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import ru.damapi.domain.use_cases.GetCardOfTheDayUseCase
+import kotlin.concurrent.thread
 
 class HomeViewModel(
     private val getCardOfTheDayUseCase: GetCardOfTheDayUseCase
@@ -43,6 +45,7 @@ class HomeViewModel(
                 isLoading = true
             )
             viewModelScope.launch {
+                Thread.sleep(2000)
                 val card = getCardOfTheDayUseCase.execute()
                 _viewState.value = state.copy(
                     isLoading = false,

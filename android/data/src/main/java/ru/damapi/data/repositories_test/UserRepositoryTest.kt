@@ -1,6 +1,6 @@
 package ru.damapi.data.repositories_test
 
-import ru.damapi.domain.models.CardOfTheDayModel
+import ru.damapi.domain.models.CardModel
 import ru.damapi.domain.models.UserModel
 import ru.damapi.domain.repositories.UserRepository
 import ru.damapi.domain.use_cases.LoginResult
@@ -25,12 +25,12 @@ class UserRepositoryTest : UserRepository {
         )
     }
 
-    override suspend fun getCardOfTheDay(): CardOfTheDayModel? {
-        return CardOfTheDayModel(
+    override suspend fun getCardOfTheDay(): CardModel? {
+        return CardModel(
             id = 0,
             name = "The Fool",
             meaning = "New beginnings, innocence, spontaneity, a free spirit",
-            imageUrl = "https://example.com/the_fool.jpg",
+            imageUrl = null,
             interpretationOfTheDay = "Today is a day for new beginnings. Embrace the unknown and take a leap of faith."
         )
     }

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import ru.damapi.divinaition.R
+import ru.damapi.divinaition.ui.divine_composables.CardDialog
 import ru.damapi.divinaition.ui.divine_composables.DivineBigText
 import ru.damapi.divinaition.ui.divine_composables.DivineIconButton
 import ru.damapi.divinaition.ui.divine_composables.DivineLoadingScreen
@@ -28,6 +29,7 @@ import ru.damapi.divinaition.ui.divine_composables.DivineReadingButton
 import ru.damapi.divinaition.ui.vectors.icons.Person
 import ru.damapi.divinaition.ui.vectors.icons.Question
 import ru.damapi.divinaition.ui.vectors.icons.Template
+import ru.damapi.domain.models.CardModel
 
 @Composable
 fun HomeView(
@@ -67,51 +69,64 @@ fun MainState(
     onCardOfTheDayClicked: () -> Unit,
     onCardOfTheDayDismissed: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            DivineIconButton(
-                imageId = R.drawable.person
-            ) { }
-
-        }
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            DivineBigText(text = "Выберите способ гадания")
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.Start
             ) {
-                DivineReadingButton(
-                    text = "Шаблоны",
-                    isInverted = true,
-                    icon = Template
-                ) { onTemplatesClicked() }
-                DivineReadingButton(
-                    text = "Вопрос",
-                    isInverted = false,
-                    icon = Question
-                ) { onQuestionClicked() }
+                DivineIconButton(
+                    imageVector = Person,
+                ) {onProfileClicked() }
+
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                DivineBigText(text = "Выберите способ гадания")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    DivineReadingButton(
+                        text = "Шаблоны",
+                        isInverted = true,
+                        icon = Template
+                    ) { onTemplatesClicked() }
+                    DivineReadingButton(
+                        text = "Вопрос",
+                        isInverted = false,
+                        icon = Question
+                    ) { onQuestionClicked() }
+                }
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(128.dp)
+                        .clickable { onCardOfTheDayClicked() },
+                    painter = painterResource(R.drawable.meaning),
+                    contentDescription = "Icon",
+                )
+                DivineBigText(text = "Карта дня")
             }
         }
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                modifier = Modifier.size(128.dp).clickable { onCardOfTheDayClicked() },
-                painter = painterResource(R.drawable.meaning),
-                contentDescription = "Icon",
+        if (state.showCardOfTheDay && state.cardOfTheDay != null) {
+            CardDialog(
+                card = state.cardOfTheDay,
+                onDismissRequest = { onCardOfTheDayDismissed() }
             )
-            DivineBigText(text = "Карта дня")
         }
+        if (state.isLoading) DivineLoadingScreen()
     }
 }
 
@@ -129,7 +144,13 @@ fun HomePreview() {
                 state = HomeState.Main(
                     isLoading = false,
                     showCardOfTheDay = true,
-                    cardOfTheDay = null
+                    cardOfTheDay = CardModel(
+                        id = 0,
+                        name = "Карта дня",
+                        meaning = "Значение карты дня",
+                        imageUrl = null,
+                        interpretationOfTheDay = "Толкование карты дня"
+                    )
                 ),
                 onProfileClicked = {},
                 onTemplatesClicked = {},
