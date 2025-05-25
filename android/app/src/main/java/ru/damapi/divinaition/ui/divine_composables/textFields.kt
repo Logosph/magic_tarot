@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import ru.damapi.divinaition.ui.vectors.icons.EyeClosed
 import ru.damapi.divinaition.ui.vectors.icons.EyeOpen
+import ru.damapi.divinaition.ui.vectors.icons.QuestionMark
 
 @Composable
 fun DivineTextField(
@@ -76,11 +78,53 @@ fun DivinePasswordField(
         },
         trailingIcon = {
             Icon(
-                modifier = Modifier.size(24.dp).clickable {
-                    isVisible.value = !isVisible.value
-                },
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        isVisible.value = !isVisible.value
+                    },
                 imageVector = if (isVisible.value) EyeOpen else EyeClosed,
                 contentDescription = "Visibility Icon"
+            )
+        }
+    )
+}
+
+@Composable
+fun QuestionTextField(
+    label: String,
+    text: String,
+    errorMessage: String? = null,
+    onValueChanged: (String) -> Unit,
+    onFocusChanged: (String) -> Unit,
+    onAskClicked: () -> Unit
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .padding(8.dp)
+            .onFocusChanged {
+                onFocusChanged(text)
+            },
+        value = text,
+        onValueChange = {
+            onValueChanged(it)
+        },
+        isError = errorMessage != null,
+        supportingText = {
+            if (errorMessage != null) {
+                Text(errorMessage)
+            }
+        },
+        trailingIcon = {
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        onFocusChanged(text)
+                        onAskClicked()
+                    },
+                imageVector = QuestionMark,
+                contentDescription = "Question Icon"
             )
         }
     )

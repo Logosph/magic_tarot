@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import ru.damapi.divinaition.R
+import ru.damapi.divinaition.ui.Screen
 import ru.damapi.divinaition.ui.divine_composables.CardDialog
 import ru.damapi.divinaition.ui.divine_composables.DivineBigText
 import ru.damapi.divinaition.ui.divine_composables.DivineIconButton
@@ -41,7 +42,13 @@ fun HomeView(
 
     when (viewAction.value) {
         HomeAction.NavigateToProfile -> {}
-        HomeAction.NavigateToQuestion -> {}
+        HomeAction.NavigateToQuestion -> {
+            navController.navigate(Screen.QuestionScreen.route) {
+                launchSingleTop = true
+                restoreState = true
+            }
+            viewModel.obtainEvent(HomeEvent.ClearAction)
+        }
         HomeAction.NavigateToTemplates -> {}
         null -> {}
     }
