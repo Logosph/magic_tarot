@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.internal.wait
 import ru.damapi.domain.use_cases.GetCardsByQuestionUseCase
 import ru.damapi.domain.use_cases.GetReadingInterpretationUseCase
 
@@ -19,13 +18,9 @@ class QuestionReadingViewModel(
     private val _viewState = MutableStateFlow<QuestionReadingState>(QuestionReadingState.Loading)
     val viewState: StateFlow<QuestionReadingState>
         get() = _viewState
-    private val _viewAction = MutableStateFlow<QuestionReadingAction?>(null)
-    val viewAction: StateFlow<QuestionReadingAction?>
-        get() = _viewAction
 
     fun obtainEvent(event: QuestionReadingEvent) {
         when (event) {
-            is QuestionReadingEvent.BackClicked -> backClicked()
             is QuestionReadingEvent.LoadCards -> loadCards(event.question)
         }
     }
@@ -49,13 +44,8 @@ class QuestionReadingViewModel(
                 } else {
                     _viewState.value = QuestionReadingState.Error
                 }
-
             }
         }
 
-    }
-
-    private fun backClicked() {
-        _viewAction.value = QuestionReadingAction.NavigateToQuestion
     }
 }

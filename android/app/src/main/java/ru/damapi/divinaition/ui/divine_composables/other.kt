@@ -1,17 +1,15 @@
 package ru.damapi.divinaition.ui.divine_composables
 
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -133,97 +131,130 @@ fun DivineCardCarousel(
                     scaleY = scale / 100.dp
                 }
             }
+
+        val card = cards[page]
         Column(
             modifier = imageModifier,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             DivineTitle(
-                text = cards[page].name,
+                text = card.name,
             )
 
-            val imageUrl = cards[page].imageUrl
-            if (imageUrl == null) {
-                Image(
-                    imageVector = Card,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
-            }
+            val imageUrl = card.imageUrl
+
+
+            val cardFace = remember { mutableStateOf(CardFace.Front) }
+            FlipCard(
+                cardFace = cardFace.value,
+                onClick = { face ->
+                    cardFace.value = face
+                },
+                front = {
+                    if (imageUrl == null) {
+                        Image(
+                            imageVector = Card,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.FillWidth
+                        )
+                    }
+                },
+                back = {
+                    Box(
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            imageVector = CardBack,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.FillWidth
+                        )
+                        Text(
+                            text = card.meaning,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(32.dp)
+                        )
+                    }
+                }
+            )
         }
     }
 }
 
+enum class CardFace(val angle: Float) {
+    Front(0f) {
+        override val next: CardFace
+            get() = Back
+    },
+    Back(180f) {
+        override val next: CardFace
+            get() = Front
+    };
+
+    abstract val next: CardFace
+}
+
+enum class RotationAxis {
+    AxisX,
+    AxisY,
+}
+
+
 @Composable
 fun FlipCard(
-    front: @Composable () -> Unit,
-    back: @Composable () -> Unit
+    cardFace: CardFace,
+    onClick: (CardFace) -> Unit,
+    modifier: Modifier = Modifier,
+    axis: RotationAxis = RotationAxis.AxisY,
+    back: @Composable () -> Unit = {},
+    front: @Composable () -> Unit = {},
 ) {
-
-    var rotated by remember { mutableStateOf(false) }
-
-    val rotation by animateFloatAsState(
-        targetValue = if (rotated) 180f else 0f,
-        animationSpec = tween(500)
-    )
-
-    val animateFront by animateFloatAsState(
-        targetValue = if (!rotated) 1f else 0f,
-        animationSpec = tween(500)
-    )
-
-    val animateBack by animateFloatAsState(
-        targetValue = if (rotated) 1f else 0f,
-        animationSpec = tween(500)
-    )
-
-    Box(
-        Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .graphicsLayer {
-                    rotationY = rotation
-                    cameraDistance = 8 * density
-                }
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    rotated = !rotated
-                },
+    val rotation = animateFloatAsState(
+        targetValue = cardFace.angle,
+        animationSpec = tween(
+            durationMillis = 400,
+            easing = FastOutSlowInEasing,
         )
-        {
-            Column(
-                Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .height(480.dp)
-                        .fillMaxWidth()
-                        .graphicsLayer {
-                            alpha = if (rotated) animateBack else animateFront
-                            rotationY = rotation
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (!rotated) {
-                        front()
-                    } else {
-                        back()
-                    }
+    )
+    Card(
+        onClick = { onClick(cardFace.next) },
+        modifier = modifier
+            .graphicsLayer {
+                if (axis == RotationAxis.AxisX) {
+                    rotationX = rotation.value
+                } else {
+                    rotationY = rotation.value
                 }
+                cameraDistance = 12f * density
+            },
+    ) {
+        if (rotation.value <= 90f) {
+            Box(
+                Modifier.fillMaxSize()
+            ) {
+                front()
+            }
+        } else {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        if (axis == RotationAxis.AxisX) {
+                            rotationX = 180f
+                        } else {
+                            rotationY = 180f
+                        }
+                    },
+            ) {
+                back()
             }
         }
     }
@@ -240,12 +271,14 @@ fun CardDialogPreview() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             FlipCard(
+                cardFace = CardFace.Front,
+                onClick = {},
                 front = {
                     Image(
                         imageVector = Card,
                         contentDescription = null,
                         modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.FillHeight
+                        contentScale = ContentScale.FillWidth
                     )
                 },
                 back = {
@@ -260,7 +293,7 @@ fun CardDialogPreview() {
                             imageVector = CardBack,
                             contentDescription = null,
                             modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.FillHeight
+                            contentScale = ContentScale.FillWidth
                         )
                     }
                 }

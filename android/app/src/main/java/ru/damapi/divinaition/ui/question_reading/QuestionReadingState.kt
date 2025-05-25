@@ -9,15 +9,11 @@ sealed class QuestionReadingState {
         val reading: String? = null,
         val isReadingLoading: Boolean = true
     ) : QuestionReadingState()
+
     data object Loading : QuestionReadingState()
-    data object Error: QuestionReadingState()
+    data object Error : QuestionReadingState()
 }
 
 sealed class QuestionReadingEvent {
-    data object BackClicked : QuestionReadingEvent()
-    data class LoadCards(val question: String): QuestionReadingEvent()
-}
-
-sealed class QuestionReadingAction {
-    data object NavigateToQuestion : QuestionReadingAction()
+    data class LoadCards(val question: String) : QuestionReadingEvent()
 }

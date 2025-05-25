@@ -1,15 +1,13 @@
 package ru.damapi.divinaition.ui.question_reading
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,12 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
-import ru.damapi.divinaition.ui.Screen
 import ru.damapi.divinaition.ui.divine_composables.DivineCardCarousel
 import ru.damapi.divinaition.ui.divine_composables.DivineLoadingScreen
 import ru.damapi.divinaition.ui.divine_composables.DivineProgressBar
 import ru.damapi.divinaition.ui.divine_composables.DivineTitle
-import ru.damapi.divinaition.ui.vectors.icons.Back
 import ru.damapi.domain.models.CardModel
 
 @Composable
@@ -36,24 +32,11 @@ fun QuestionReadingView(
     viewModel: QuestionReadingViewModel = koinViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsState()
-    val viewAction = viewModel.viewAction.collectAsState()
-
-    when (val action = viewAction.value) {
-        is QuestionReadingAction.NavigateToQuestion -> {
-            navController.navigate(Screen.QuestionScreen.route) {
-                popUpTo(Screen.QuestionReadingScreen.createRoute(question)) { inclusive = true }
-            }
-            viewModel.obtainEvent(QuestionReadingEvent.BackClicked)
-        }
-
-        null -> {}
-    }
 
     when (val state = viewState.value) {
         is QuestionReadingState.MainState -> {
             MainState(
-                state,
-                onBackClicked = { viewModel.obtainEvent(QuestionReadingEvent.BackClicked) }
+                state
             )
         }
 
@@ -80,72 +63,47 @@ fun QuestionReadingView(
 
 @Composable
 fun MainState(
-    state: QuestionReadingState.MainState,
-    onBackClicked: () -> Unit
+    state: QuestionReadingState.MainState
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(vertical = 32.dp, horizontal = 16.dp),
     ) {
-        Row(
+        Box(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
+            contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Back,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable { onBackClicked() }
+            DivineTitle(
+                text = state.question
             )
         }
-
-        DivineTitle(
-            text = state.question
-        )
-
-//        DivineCardCarousel(
-//            cards = state.cards
-//        )
-//        FlipCard(
-//            front = {
-//                Image(
-//                    imageVector = Card,
-//                    contentDescription = null,
-//                    modifier = Modifier.fillMaxWidth(),
-//                    contentScale = ContentScale.Crop
-//                )
-//            },
-//            back = {
-//                Text(
-//                    "Просто какой-то\nтекст\nна обратной стороне",
-//                    textAlign = TextAlign.Center,
-//                    fontSize = 20.sp,
-//                    modifier = Modifier.padding(16.dp)
-//                )
-//            }
-//        )
 
         DivineCardCarousel(
             cards = state.cards,
         )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
 
-        if (state.isReadingLoading) {
-            DivineProgressBar(
-                text = "Ожидание интерпретации"
-            )
-        } else {
-            Text(
-                modifier = Modifier.padding(vertical = 16.dp),
-                text = "Ответ ИИ:",
-                fontSize = 20.sp,
-            )
-            Text(
-                text = state.reading ?: "",
-                fontSize = 14.sp,
-            )
+
+            if (state.isReadingLoading) {
+                DivineProgressBar(
+                    text = "Ожидание интерпретации"
+                )
+            } else {
+                Text(
+                    modifier = Modifier.padding(vertical = 16.dp),
+                    text = "Ответ ИИ:",
+                    fontSize = 20.sp,
+                )
+                Text(
+                    text = state.reading ?: "",
+                    fontSize = 14.sp,
+                )
+            }
         }
     }
 }
@@ -167,7 +125,6 @@ fun QuestionReadingPreview() {
             ),
             reading = "Этот расклад указывает на то, что ваш проект находится на пороге важного завершения или трансформации, что потребует избавиться от устаревших методов или идей, чтобы перейти к новому этапу развития. В процессе защиты может возникнуть внутреннее противоречие или чувство разочарования, связанное с тем, что не все идет так гладко, как хотелось бы, однако это временные трудности, которые помогут вам переосмыслить свои цели и подходы. Важной частью этого периода станет поиск баланса и гармонии, что поможет сгладить острые углы и добиться более объективной оценки. Возможно, защита пройдет не так идеально, как ожидалось, но итоговая оценка будет взвешенной и справедливой, учитывающей как достижения, так и недостатки. В целом, ситуация требует терпения, мудрости и умения слушать друг друга, чтобы успешно завершить этот цикл и подготовиться к новым возможностям. Главное — сохранять спокойствие и не торопиться с выводами, ведь всё идет по плану трансформации и обновления.",
             isReadingLoading = false
-        ),
-        onBackClicked = { }
+        )
     )
 }

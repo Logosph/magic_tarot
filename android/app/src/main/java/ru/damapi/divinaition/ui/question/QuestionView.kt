@@ -1,11 +1,14 @@
 package ru.damapi.divinaition.ui.question
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -34,21 +37,12 @@ fun QuestionView(
 ) {
     val viewState = viewModel.viewState.collectAsState()
     val viewAction = viewModel.viewAction.collectAsState()
-
     when (val action = viewAction.value) {
         is QuestionAction.NavigateToReading -> {
             viewModel.obtainEvent(QuestionEvent.ClearAction)
             navController.navigate(Screen.QuestionReadingScreen.createRoute(action.question)) {
                 launchSingleTop = true
                 restoreState = true
-            }
-            viewModel.obtainEvent(QuestionEvent.ClearAction)
-        }
-
-        QuestionAction.NavigateToHome -> {
-            viewModel.obtainEvent(QuestionEvent.ClearAction)
-            navController.navigate(Screen.HomeScreen.route) {
-                popUpTo(Screen.QuestionScreen.route) { inclusive = true }
             }
             viewModel.obtainEvent(QuestionEvent.ClearAction)
         }
@@ -67,8 +61,7 @@ fun QuestionView(
                         )
                     )
                 },
-                onAskClicked = {  viewModel.obtainEvent(QuestionEvent.AskClicked) },
-                onBackClicked = { viewModel.obtainEvent(QuestionEvent.BackClicked) }
+                onAskClicked = { viewModel.obtainEvent(QuestionEvent.AskClicked) }
             )
         }
 
@@ -83,27 +76,15 @@ fun QuestionView(
 fun MainState(
     state: QuestionState.MainState,
     onQuestionChanged: (String) -> Unit,
-    onAskClicked: () -> Unit,
-    onBackClicked: () -> Unit
+    onAskClicked: () -> Unit
 ) {
     val question = remember { mutableStateOf(state.question) }
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Icon(
-                imageVector = Back,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable { onBackClicked() }
-            )
-        }
+        Spacer(Modifier.height(16.dp))
         Text(
             text = "Обратимся к картам и технологиям...",
             modifier = Modifier.padding(16.dp),
@@ -138,7 +119,6 @@ fun QuestionPreview() {
     MainState(
         state = QuestionState.MainState(""),
         onQuestionChanged = {},
-        onAskClicked = {},
-        onBackClicked = {}
+        onAskClicked = {}
     )
 }

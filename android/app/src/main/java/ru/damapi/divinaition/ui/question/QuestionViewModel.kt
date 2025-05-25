@@ -18,7 +18,6 @@ class QuestionViewModel(
         when (event) {
             is QuestionEvent.QuestionChanged -> questionChanged(event.question)
             is QuestionEvent.AskClicked -> askClicked()
-            is QuestionEvent.BackClicked -> backClicked()
             is QuestionEvent.ClearAction -> clearAction()
         }
     }
@@ -26,10 +25,6 @@ class QuestionViewModel(
     private fun clearAction() {
         _viewAction.value = null
         _viewState.value = QuestionState.MainState()
-    }
-
-    private fun backClicked() {
-        _viewAction.value = QuestionAction.NavigateToHome
     }
 
     private fun askClicked() {
