@@ -3,12 +3,14 @@ package ru.damapi.divinaition.ui.question
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -79,18 +81,21 @@ fun MainState(
     onAskClicked: () -> Unit
 ) {
     val question = remember { mutableStateOf(state.question) }
-    Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp).imePadding(),
+        contentAlignment = Alignment.Center
     ) {
-        Spacer(Modifier.height(16.dp))
         Text(
             text = "Обратимся к картам и технологиям...",
             modifier = Modifier.padding(16.dp),
             fontSize = 28.sp,
             textAlign = TextAlign.Center
         )
+    }
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
