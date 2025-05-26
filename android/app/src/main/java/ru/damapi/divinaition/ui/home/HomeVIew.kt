@@ -40,7 +40,13 @@ fun HomeView(
     val viewAction = viewModel.viewAction.collectAsState()
 
     when (viewAction.value) {
-        HomeAction.NavigateToProfile -> {}
+        HomeAction.NavigateToProfile -> {
+            navController.navigate(Screen.ProfileScreen.route) {
+                launchSingleTop = true
+                restoreState = true
+            }
+            viewModel.obtainEvent(HomeEvent.ClearAction)
+        }
         HomeAction.NavigateToQuestion -> {
             navController.navigate(Screen.QuestionScreen.route) {
                 launchSingleTop = true

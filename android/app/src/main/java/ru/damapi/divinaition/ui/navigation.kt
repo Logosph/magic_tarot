@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import ru.damapi.divinaition.ui.home.HomeView
 import ru.damapi.divinaition.ui.login.LoginView
+import ru.damapi.divinaition.ui.profile.ProfileView
 import ru.damapi.divinaition.ui.question.QuestionView
 import ru.damapi.divinaition.ui.question_reading.QuestionReadingView
 import ru.damapi.divinaition.ui.signup.SignupView
@@ -23,6 +24,7 @@ sealed class Screen(val route: String) {
     data object QuestionReadingScreen : Screen("question_reading/{question}") {
         fun createRoute(question: String) = "question_reading/$question"
     }
+    data object ProfileScreen : Screen("profile")
 }
 
 @Composable
@@ -43,6 +45,9 @@ fun SetUpNavHost(
         ) { backStackEntry ->
             val question = backStackEntry.arguments?.getString("question") ?: ""
             QuestionReadingView(navController, question)
+        }
+        composable(route = Screen.ProfileScreen.route) {
+            ProfileView()
         }
     }
 }

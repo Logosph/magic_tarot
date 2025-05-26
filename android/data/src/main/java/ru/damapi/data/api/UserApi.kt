@@ -4,7 +4,9 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import ru.damapi.data.requests.AuthRequest
+import ru.damapi.data.requests.UpdateNameRequest
 import ru.damapi.data.responses.CardResponse
 import ru.damapi.data.responses.TokenResponse
 import ru.damapi.data.responses.UserResponse
@@ -16,10 +18,10 @@ interface UserApi {
     @POST("auth/signup")
     suspend fun signup(@Body request: AuthRequest): TokenResponse
 
-    @POST("user/update_name")
+    @PUT("user/update_name")
     suspend fun updateName(
         @Header("Authorization") token: String,
-        @Body name: String
+        @Body updateNameRequest: UpdateNameRequest
     ): UserResponse
 
     @GET("user/me")

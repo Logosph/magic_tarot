@@ -1,14 +1,15 @@
 package ru.damapi.data.repositories_impl
 
+import android.util.Log
 import ru.damapi.data.api.UserApi
 import ru.damapi.data.requests.AuthRequest
+import ru.damapi.data.requests.UpdateNameRequest
 import ru.damapi.domain.models.CardModel
 import ru.damapi.domain.models.UserModel
 import ru.damapi.domain.repositories.SharedPrefsRepository
 import ru.damapi.domain.repositories.UserRepository
 import ru.damapi.domain.use_cases.LoginResult
 import ru.damapi.domain.use_cases.SignupResult
-import android.util.Log
 
 class UserRepositoryImpl(
     private val userApi: UserApi,
@@ -62,7 +63,9 @@ class UserRepositoryImpl(
         try {
             userApi.updateName(
                 token = "Bearer $token",
-                name = name
+                updateNameRequest = UpdateNameRequest(
+                    name = name
+                )
             )
             Log.d("server resp", "updateName: success")
             return true
@@ -102,3 +105,4 @@ class UserRepositoryImpl(
         }
     }
 }
+

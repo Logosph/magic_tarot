@@ -8,11 +8,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.damapi.divinaition.ui.profile.ProfileEvent
+import ru.damapi.domain.use_cases.EditUsernameUseCase
 import ru.damapi.domain.use_cases.SignupResult
 import ru.damapi.domain.use_cases.SignupUseCase
 
 class SignupViewModel(
-    private val signupUseCase: SignupUseCase
+    private val signupUseCase: SignupUseCase,
+    private val editUsernameUserCase: EditUsernameUseCase
 ) : ViewModel() {
     private val _viewState = MutableStateFlow<SignupState>(SignupState.Main())
     val viewState: StateFlow<SignupState>
@@ -98,6 +101,7 @@ class SignupViewModel(
                 )
                 when (result) {
                     SignupResult.OK -> {
+                        editUsernameUserCase.execute(username)
                         _viewAction.value = SignupAction.NavigateToHome
                     }
 
