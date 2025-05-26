@@ -1,4 +1,4 @@
-package ru.damapi.divinaition
+package ru.damapi.data
 
 import org.junit.Test
 
