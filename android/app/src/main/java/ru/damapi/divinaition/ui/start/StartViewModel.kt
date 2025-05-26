@@ -35,13 +35,11 @@ class StartViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val user = getCurrentUserUseCase.execute()
-                //Заглушка до подключения сервера
-                _viewAction.value = StartAction.NavigateToLogin
-//                if (user != null) {
-//                    _viewAction.value = StartAction.NavigateToHome
-//                } else {
-//                    _viewAction.value = StartAction.NavigateToLogin
-//                }
+                if (user != null) {
+                    _viewAction.value = StartAction.NavigateToHome
+                } else {
+                    _viewAction.value = StartAction.NavigateToLogin
+                }
             }
         }
     }

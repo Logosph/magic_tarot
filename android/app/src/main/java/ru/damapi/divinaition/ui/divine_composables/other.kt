@@ -81,7 +81,7 @@ fun CardDialog(card: CardModel, onDismissRequest: () -> Unit) {
             ) {
                 DivineTitle(card.name)
                 DivineCard(card = card)
-                DivineText(card.interpretationOfTheDay)
+                DivineText(card.interpretationOfTheDay?: "Ошибка. Интерпретация дня отсутствует")
             }
         }
     }

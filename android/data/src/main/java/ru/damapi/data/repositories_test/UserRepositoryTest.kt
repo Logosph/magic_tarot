@@ -15,6 +15,10 @@ class UserRepositoryTest : UserRepository {
         return SignupResult.OK
     }
 
+    override suspend fun updateName(name: String): Boolean {
+        return true
+    }
+
     override suspend fun getCurrentUser(): UserModel? {
         return UserModel(
             uuid = "uuid",

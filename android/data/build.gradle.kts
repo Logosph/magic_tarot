@@ -41,6 +41,11 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.koin.android)
 
+    // Networking libraries
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
     //modules
     implementation(project(":domain"))
 }

@@ -27,7 +27,6 @@ import ru.damapi.divinaition.ui.divine_composables.DivineBigText
 import ru.damapi.divinaition.ui.divine_composables.DivineIconButton
 import ru.damapi.divinaition.ui.divine_composables.DivineLoadingScreen
 import ru.damapi.divinaition.ui.divine_composables.DivineReadingButton
-import ru.damapi.divinaition.ui.vectors.icons.Person
 import ru.damapi.divinaition.ui.vectors.icons.Question
 import ru.damapi.divinaition.ui.vectors.icons.Template
 import ru.damapi.domain.models.CardModel
@@ -85,10 +84,10 @@ fun MainState(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.Center
             ) {
                 DivineIconButton(
-                    imageVector = Person,
+                    imageId = R.drawable.person
                 ) {onProfileClicked() }
 
             }

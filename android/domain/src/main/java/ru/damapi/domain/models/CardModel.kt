@@ -5,5 +5,5 @@ data class CardModel (
     val name: String,
     val meaning: String,
     val imageUrl: String?,
-    val interpretationOfTheDay: String
+    val interpretationOfTheDay: String?
 )
